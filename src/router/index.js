@@ -2,6 +2,8 @@ import Vue from 'vue';
 // 1.导入路由实例化对象
 import VueRouter from 'vue-router'
 
+// 导入子组件
+import login from '@/view/login/login.vue';
 // 2.注册路由
 Vue.use(VueRouter);
 
@@ -11,7 +13,7 @@ let router  = new VueRouter({
     routes:[
         {
             path:'/',
-            components:null,
+            component:login,
         }
     ]
 });

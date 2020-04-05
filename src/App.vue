@@ -17,5 +17,8 @@ export default {
 };
 </script>
 
-<style>
+
+<style lang='less'>
+// 使用less,lang='less'
+
 </style>
