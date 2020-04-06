@@ -45,9 +45,10 @@
           <el-button class="btn" type="primary" @click="subLogin">登录</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button class="btn" type="primary">注册</el-button>
+          <el-button class="btn" type="primary" @click="getReg">注册</el-button>
         </el-form-item>
       </el-form>
+      <register ref="register" />
     </div>
     <div class="right">
       <img src="@/assets/img/login_banner_ele.png" alt />
@@ -56,6 +57,7 @@
 </template>
 
 <script>
+import register from './register.vue';
 export default {
   data() {
     return {
@@ -78,6 +80,9 @@ export default {
       }
     };
   },
+  components:{
+    register,
+  },
   methods: {
     subLogin() {
       this.$refs.form.validate(result => {
@@ -87,6 +92,9 @@ export default {
           this.$message.error("请输入登录信息");
         }
       });
+    },
+    getReg(){
+      this.$refs.register.dialogFormVisible = true;
     }
   }
 };
