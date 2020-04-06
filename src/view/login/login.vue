@@ -83,7 +83,7 @@ export default {
       }
     };
   },
-  // 组价注册
+  // 组件注册
   components: {
     register
   },
