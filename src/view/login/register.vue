@@ -1,11 +1,6 @@
 <template>
-  <el-dialog
-    title="收货地址"
-    :visible.sync="dialogFormVisible"
-    class="register"
-    width="600px"
-    :show-close="false"
-  >
+  <!-- 注册组件 -->
+  <el-dialog :visible.sync="dialogFormVisible" class="register" width="600px" :show-close="false">
     <div slot="title" class="title">用户注册</div>
     <div slot="footer" class="dialog-footer">
       <el-button @click="dialogFormVisible = false">取 消</el-button>
