@@ -7,8 +7,8 @@
         <span class="titleLine">|</span>
         <span class="titleLogin">用户登录</span>
       </div>
-      <el-form :model="form">
-        <el-form-item>
+      <el-form :model="form" :rules="rules" ref="form">
+        <el-form-item prop="phone">
           <el-input
             placeholder="请输入内容"
             prefix-icon="el-icon-user-solid"
@@ -16,7 +16,7 @@
             clearable
           ></el-input>
         </el-form-item>
-        <el-form-item>
+        <el-form-item prop="password">
           <el-input
             placeholder="请输入密码"
             prefix-icon="el-icon-lock"
@@ -24,12 +24,12 @@
             show-password
           ></el-input>
         </el-form-item>
-        <el-form-item>
+        <el-form-item prop="code">
           <el-col :span="18">
             <el-input v-model="form.code" prefix-icon="el-icon-key" placeholder="请输入验证码"></el-input>
           </el-col>
           <el-col :span="6">
-            <img src="" alt="">
+            <img src alt />
           </el-col>
         </el-form-item>
 
@@ -42,7 +42,7 @@
           </el-checkbox>
         </el-form-item>
         <el-form-item>
-          <el-button class="btn" type="primary">登录</el-button>
+          <el-button class="btn" type="primary" @click="subLogin">登录</el-button>
         </el-form-item>
         <el-form-item>
           <el-button class="btn" type="primary">注册</el-button>
@@ -64,8 +64,30 @@ export default {
         password: "",
         code: "",
         checked: false
+      },
+      rules: {
+        phone: [{ required: true, message: "请输入手机号", trigger: "blur" }],
+        password: [
+          { required: true, message: "请输入密码", trigger: "blur" },
+          { min: 6, max: 12, message: "请输入6-12位密码", trigger: "blur" }
+        ],
+        code: [
+          { required: true, message: "请输入验证码", trigger: "blur" },
+          { min: 4, max: 4, message: "请输入正确的验证码", trigger: "blur" }
+        ]
       }
     };
+  },
+  methods: {
+    subLogin() {
+      this.$refs.form.validate(result => {
+        if (result) {
+          this.$message.success("成功");
+        } else {
+          this.$message.error("请输入登录信息");
+        }
+      });
+    }
   }
 };
 </script>
