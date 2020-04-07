@@ -35,7 +35,7 @@
             <el-input v-model="form.code"></el-input>
           </el-col>
           <el-col :span="7" :offset="1">
-            <img src='@/assets/img/验证码.jpg' alt />
+            <img class="codeImg" :src="codeImg" @click="changeCodeImg" alt />
           </el-col>
         </el-row>
       </el-form-item>
@@ -82,6 +82,7 @@ export default {
     return {
       dialogFormVisible: false,
       imageUrl: "",
+      codeImg: process.env.VUE_APP_URL + "/captcha?type=sendsms",
       baseURL: process.env.VUE_APP_URL,
       form: {
         avatar: "",
@@ -111,11 +112,18 @@ export default {
           { required: true, message: "请输入正确图形码", triggle: "blur" },
           { min: 4, max: 4, message: "请输入正确图形码", triggle: "blur" }
         ],
-        rcode:[{required:true,message:'请输入手机验证码',triggle:"blur"}],
+        rcode: [
+          { required: true, message: "请输入手机验证码", triggle: "blur" },
+          { min: 4, max: 4, message: "请输入正确手机验证码", triggle: "blur" }
+        ]
       }
     };
   },
   methods: {
+    changeCodeImg() {
+      this.codeImg =
+        process.env.VUE_APP_URL + "/captcha?type=sendsms&t=" + Date.now();
+    },
     // 全局验证
     submitClickFalse() {
       this.$refs.form.resetFields();
@@ -171,6 +179,9 @@ export default {
     background: linear-gradient(to right, #02c6fc, #1495fd);
     line-height: 53px;
   }
+  .codeImg {
+    width: 100%;
+  }
 }
 </style>
 <style lang="less">
@@ -205,7 +216,7 @@ export default {
     height: 178px;
     display: block;
   }
-  .dialog-footer{
+  .dialog-footer {
     text-align: center;
   }
 }
