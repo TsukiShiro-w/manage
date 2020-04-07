@@ -19,7 +19,7 @@ export default {
 };
 </script>
 
-<style lang='less'>
+<style lang='less' scoped>
 .register {
   .title {
     height: 53px;
@@ -28,8 +28,13 @@ export default {
     background: linear-gradient(to right, #02c6fc, #1495fd);
     line-height: 53px;
   }
-  .el-dialog__header {
+  
+}
+</style>
+<style lang="less">
+  .register{
+    .el-dialog__header {
     padding: 0;
   }
-}
+  }
 </style>
