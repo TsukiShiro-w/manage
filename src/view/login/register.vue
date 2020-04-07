@@ -2,7 +2,7 @@
   <!-- 注册组件 -->
   <el-dialog :visible.sync="dialogFormVisible" class="register" width="600px" :show-close="false">
     <div slot="title" class="title">用户注册</div>
-    <el-form>
+    <el-form :model='form' :rules='rules'>
       <span style="color:red">*</span>头像:
       <el-form-item label-width='100px'>
         
@@ -33,7 +33,10 @@ export default {
     return {
       dialogFormVisible: false,
       imageUrl: "",
-      baseURL: process.env.VUE_APP_URL
+      baseURL: process.env.VUE_APP_URL,
+      form:{
+
+      }
     };
   },
   methods: {
