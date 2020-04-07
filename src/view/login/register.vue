@@ -52,7 +52,7 @@
     </el-form>
 
     <div slot="footer" class="dialog-footer">
-      <el-button @click="dialogFormVisible = false">取 消</el-button>
+      <el-button @click="submitClickFalse">取 消</el-button>
       <el-button type="primary" @click="submitClick">确 定</el-button>
     </div>
   </el-dialog>
@@ -145,11 +145,13 @@ export default {
       this.codeImg =
         process.env.VUE_APP_URL + "/captcha?type=sendsms&t=" + Date.now();
     },
+    // 取消按钮
+    submitClickFalse() {
+      this.imageUrl = '';
+      this.$refs.form.resetFields();
+      this.dialogFormVisible = false;
+    },
     // 全局验证
-    // submitClickFalse() {
-    //   this.$refs.form.resetFields();
-    //   this.dialogFormVisible = false;
-    // },
     submitClick() {
       this.$refs.form.validate(result => {
         if (result) {
