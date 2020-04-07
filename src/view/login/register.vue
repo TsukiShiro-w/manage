@@ -205,5 +205,8 @@ export default {
     height: 178px;
     display: block;
   }
+  .dialog-footer{
+    text-align: center;
+  }
 }
 </style>
