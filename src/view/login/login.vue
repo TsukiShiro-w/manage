@@ -28,7 +28,7 @@
             <el-input v-model="form.code" prefix-icon="el-icon-key" placeholder="请输入验证码"></el-input>
           </el-col>
           <el-col :span="6">
-            <img src alt />
+            <img class="codeImg" src='@/assets/img/验证码.jpg' alt />
           </el-col>
         </el-form-item>
         <el-form-item>
@@ -158,6 +158,10 @@ export default {
     .btn {
       width: 100%;
     }
+  }
+  .codeImg{
+    width: 100px;
+    height: 40px;
   }
 }
 </style>

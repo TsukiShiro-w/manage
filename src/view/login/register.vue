@@ -2,10 +2,8 @@
   <!-- 注册组件 -->
   <el-dialog :visible.sync="dialogFormVisible" class="register" width="600px" :show-close="false">
     <div slot="title" class="title">用户注册</div>
-    <el-form :model='form' :rules='rules'>
-      <span style="color:red">*</span>头像:
-      <el-form-item label-width='100px'>
-        
+    <el-form :model="form" :rules="rules" ref="form" label-width="70px">
+      <el-form-item prop="avatar" label="头像:">
         <el-upload
           class="avatar-uploader"
           :action="baseURL+'/uploads'"
@@ -18,11 +16,44 @@
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
         </el-upload>
       </el-form-item>
+
+      <el-form-item label="昵称:" prop="username">
+        <el-input v-model="form.username"></el-input>
+      </el-form-item>
+      <el-form-item label="邮箱:" prop="email">
+        <el-input v-model="form.email"></el-input>
+      </el-form-item>
+      <el-form-item label="手机:" prop="phone">
+        <el-input v-model="form.phone"></el-input>
+      </el-form-item>
+      <el-form-item label="密码:" prop="password">
+        <el-input type="password" v-model="form.password"></el-input>
+      </el-form-item>
+      <el-form-item label="图形码:" prop="code">
+        <el-row>
+          <el-col :span="16">
+            <el-input v-model="form.code"></el-input>
+          </el-col>
+          <el-col :span="7" :offset="1">
+            <img src='@/assets/img/验证码.jpg' alt />
+          </el-col>
+        </el-row>
+      </el-form-item>
+      <el-form-item label="验证码:" prop="rcode">
+        <el-row>
+          <el-col :span="16">
+            <el-input v-model="form.rcode"></el-input>
+          </el-col>
+          <el-col :span="7" :offset="1">
+            <el-button>获取用户验证码</el-button>
+          </el-col>
+        </el-row>
+      </el-form-item>
     </el-form>
 
     <div slot="footer" class="dialog-footer">
-      <el-button @click="dialogFormVisible = false">取 消</el-button>
-      <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+      <el-button @click="submitClickFalse">取 消</el-button>
+      <el-button type="primary" @click="submitClick">确 定</el-button>
     </div>
   </el-dialog>
 </template>
@@ -30,16 +61,76 @@
 <script>
 export default {
   data() {
+    // 邮箱自定义校验规则
+    let checkEmail = (rule, value, callback) => {
+      let reg = /\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/;
+      if (reg.test(value)) {
+        callback();
+      } else {
+        callback("请输入正确邮箱");
+      }
+    };
+    // 手机号自定义校验规则
+    let checkPhone = (rule, value, callback) => {
+      let reg = /^(0|86|17951)?(13[0-9]|15[012356789]|166|17[3678]|18[0-9]|14[57])[0-9]{8}$/;
+      if (reg.test(value)) {
+        callback();
+      } else {
+        callback("请输入正确的手机号");
+      }
+    };
     return {
       dialogFormVisible: false,
       imageUrl: "",
       baseURL: process.env.VUE_APP_URL,
-      form:{
-
+      form: {
+        avatar: "",
+        username: "",
+        email: "",
+        phone: "",
+        password: "",
+        code: "",
+        rcode: ""
+      },
+      rules: {
+        avatar: [{ required: true, message: "请上传图片", triggle: "change" }],
+        username: [{ required: true, message: "请输入昵称", triggle: "blur" }],
+        email: [
+          { required: true, message: "请输入邮箱", triggle: "blur" },
+          { validator: checkEmail, triggle: "blur" }
+        ],
+        phone: [
+          { required: true, message: "请输入手机号", triggle: "blur" },
+          { validator: checkPhone, triggle: "blur" }
+        ],
+        password: [
+          { required: true, message: "请输入密码", triggle: "blur" },
+          { min: 6, max: 12, message: "请输入6-12位密码", triggle: "blur" }
+        ],
+        code: [
+          { required: true, message: "请输入正确图形码", triggle: "blur" },
+          { min: 4, max: 4, message: "请输入正确图形码", triggle: "blur" }
+        ],
+        rcode:[{required:true,message:'请输入手机验证码',triggle:"blur"}],
       }
     };
   },
   methods: {
+    // 全局验证
+    submitClickFalse() {
+      this.$refs.form.resetFields();
+      this.dialogFormVisible = false;
+    },
+    submitClick() {
+      this.$refs.form.validate(result => {
+        if (result) {
+          this.$message.success("注册成功");
+          this.dialogFormVisible = false;
+        } else {
+          this.$message.error("注册失败");
+        }
+      });
+    },
     // 成功执行后
     handleAvatarSuccess(res) {
       console.log(res);
@@ -47,6 +138,9 @@ export default {
       this.imageUrl = this.baseURL + "/" + res.data.file_path;
       // 保存到form表单中
       this.form.avatar = res.data.file_path;
+
+      // 主动验证
+      this.$refs.form.validateField("avatar");
     },
     // 上传前
     beforeAvatarUpload(file) {
@@ -84,9 +178,9 @@ export default {
   .el-dialog__header {
     padding: 0;
   }
-  .avatar-uploader{
+  .avatar-uploader {
     width: 178px;
-    margin-left: 85px;
+    margin-left: 130px;
   }
   .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;
