@@ -45,7 +45,7 @@
             <el-input v-model="form.rcode"></el-input>
           </el-col>
           <el-col :span="7" :offset="1">
-            <el-button>获取用户验证码</el-button>
+            <el-button @click="checkSms">获取用户验证码</el-button>
           </el-col>
         </el-row>
       </el-form-item>
@@ -120,6 +120,19 @@ export default {
     };
   },
   methods: {
+    checkSms() {
+      let _pass = true;
+      this.$refs.form.validateField(["phone", "code"], err => {
+        if (err != "") {
+          _pass = false;
+        }
+      });
+      if (_pass === false) {
+        return;
+      } else {
+        //调用接口
+      }
+    },
     changeCodeImg() {
       this.codeImg =
         process.env.VUE_APP_URL + "/captcha?type=sendsms&t=" + Date.now();
@@ -181,6 +194,8 @@ export default {
   }
   .codeImg {
     width: 100%;
+    border: 1px solid #dcdfe6;
+    border-radius: 4px;
   }
 }
 </style>
