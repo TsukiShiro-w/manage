@@ -160,7 +160,7 @@ export default {
         }
       });
     },
-    // 成功执行后
+    // 图片上传成功执行后
     handleAvatarSuccess(res) {
       console.log(res);
       console.log(this.baseURL);
@@ -171,7 +171,7 @@ export default {
       // 主动验证
       this.$refs.form.validateField("avatar");
     },
-    // 上传前
+    // 图片上传前
     beforeAvatarUpload(file) {
       const isJPG =
         file.type === "image/jpeg" ||
