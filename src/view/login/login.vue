@@ -87,6 +87,9 @@ export default {
   components: {
     register
   },
+  mounted() {
+    alert(process.env.VUE_APP_URL);
+  },
   methods: {
     // 表单提示框
     subLogin() {
