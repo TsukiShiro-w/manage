@@ -59,6 +59,7 @@
 </template>
 
 <script>
+import getRegisterSms from "@/api/register.js";
 export default {
   data() {
     // 邮箱自定义校验规则
@@ -120,6 +121,7 @@ export default {
     };
   },
   methods: {
+    // 验证手机号和图形码是否填写
     checkSms() {
       let _pass = true;
       this.$refs.form.validateField(["phone", "code"], err => {
@@ -130,9 +132,15 @@ export default {
       if (_pass === false) {
         return;
       } else {
-        //调用接口
+        getRegisterSms({
+          phone: this.form.phone,
+          code: this.form.code
+        }).then(res => {
+          this.$message.success(res.data.data.captcha + "");
+        });
       }
     },
+    // 刷新图形码
     changeCodeImg() {
       this.codeImg =
         process.env.VUE_APP_URL + "/captcha?type=sendsms&t=" + Date.now();
