@@ -131,7 +131,7 @@ export default {
             this.$message.success("登录成功");
           });
         } else {
-          this.$message.error("请输入登录信息");
+          this.$message.error("请输入必要的登录信息");
         }
       });
     },
