@@ -64,7 +64,8 @@
 
 <script>
 import register from "@/view/login/register.vue";
-import {loginStart} from "@/api/login.js";
+import { loginStart } from "@/api/login.js";
+import { saveToken } from "@/utils/token.js";
 export default {
   data() {
     let checkPhone = (rule, value, callback) => {
@@ -129,6 +130,7 @@ export default {
           loginStart(this.form).then(res => {
             console.log(res);
             this.$message.success("登录成功");
+            saveToken(res.data.token);
           });
         } else {
           this.$message.error("请输入必要的登录信息");
