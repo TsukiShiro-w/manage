@@ -28,7 +28,7 @@
             <el-input v-model="form.code" prefix-icon="el-icon-key" placeholder="请输入验证码"></el-input>
           </el-col>
           <el-col :span="6">
-            <img class="codeImg" src='@/assets/img/验证码.jpg' alt />
+            <img class="codeImg" :src='codeImg' @click="resetCode" alt />
           </el-col>
         </el-form-item>
         <el-form-item>
@@ -63,10 +63,11 @@ export default {
   data() {
     return {
       // 表单内容
+      codeImg:process.env.VUE_APP_URL + '/captcha?type=login',
       form: {
         phone: "",
         password: "",
-        code: "",
+        code: '',
         checked: false
       },
       // 表单验证规则
@@ -88,6 +89,10 @@ export default {
     register
   },
   methods: {
+    //刷新验证码
+    resetCode(){
+      this.codeImg = process.env.VUE_APP_URL + '/captcha?type=login&t=' + Date.now();
+    },
     // 表单提示框
     subLogin() {
       this.$refs.form.validate(result => {
