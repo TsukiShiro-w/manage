@@ -7,7 +7,7 @@
         <span class="title">黑马面面</span>
       </div>
       <div class="right">
-        <img src alt />
+        <img :src="userInfo.avatar" alt class="avatar" />
         <span class="user">xxx,你好</span>
         <el-button class="btnOut" type="primary">退出</el-button>
       </div>
@@ -20,9 +20,19 @@
 </template>
 
 <script>
+import { getUserInfo } from "@/api/home.js";
 export default {
   data() {
-    return {};
+    return {
+      userInfo: ""
+    };
+  },
+  created() {
+    getUserInfo().then(res => {
+      console.log(res);
+      this.userInfo = res.data;
+      this.userInfo.avatar = process.env.VUE_APP_URL + "/" + res.data.avatar;
+    });
   }
 };
 </script>
@@ -63,6 +73,12 @@ export default {
       line-height: 60px;
       .btnOut {
         margin-left: 20px;
+      }
+      .avatar {
+        width: 43px;
+        margin-right: 20px;
+        vertical-align: middle;
+        border-radius: 20px;
       }
     }
   }
