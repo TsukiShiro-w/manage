@@ -35,4 +35,12 @@ function getRegisterSms(data) {
         data,
     });
 }
-export { getRegisterSms }
+
+function register(data) {
+    return instance({
+        url: '/register',
+        method: 'post',
+        data,
+    })
+}
+export { getRegisterSms, register }

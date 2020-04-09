@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import { getRegisterSms } from "@/api/register.js";
+import { getRegisterSms, register } from "@/api/register.js";
 export default {
   data() {
     // 邮箱自定义校验规则
@@ -124,6 +124,15 @@ export default {
       }
     };
   },
+  // 使用侦听器实现表单清空
+  watch: {
+    dialogFormVisible(newVal) {
+      if (newVal == false) {
+        this.imageUrl = "";
+        this.$refs.form.resetFields();
+      }
+    }
+  },
   methods: {
     // 验证手机号和图形码是否填写
     checkSms() {
@@ -136,6 +145,7 @@ export default {
       if (_pass === false) {
         return;
       } else {
+        // 点击按钮验证码倒计时
         this.totalTime--;
         let timeID = setInterval(() => {
           this.totalTime--;
@@ -144,6 +154,7 @@ export default {
             this.totalTime = 60;
           }
         }, 1000);
+        // 获取手机验证码
         getRegisterSms({
           phone: this.form.phone,
           code: this.form.code
@@ -159,17 +170,24 @@ export default {
     },
     // 取消按钮
     submitClickFalse() {
-      this.imageUrl = "";
-      this.$refs.form.resetFields();
       this.dialogFormVisible = false;
     },
-    // 全局验证
+    // 提交按钮全局验证
     submitClick() {
       this.$refs.form.validate(result => {
         if (result) {
-          this.$message.success("注册成功");
-          this.dialogFormVisible = false;
+          // 注册成功
+          register(this.form).then(res => {
+            console.log(res);
+            if (res.data.code == 200) {
+              this.$message.success("注册成功");
+              this.dialogFormVisible = false;
+            } else {
+              this.$message.warning(res.data.message);
+            }
+          });
         } else {
+          // 注册失败
           this.$message.error("注册失败");
         }
       });
