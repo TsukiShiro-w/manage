@@ -45,7 +45,10 @@
             <el-input v-model="form.rcode"></el-input>
           </el-col>
           <el-col :span="7" :offset="1">
-            <el-button @click="checkSms">获取用户验证码</el-button>
+            <el-button @click="checkSms" :disabled="totalTime < 60">
+              获取验证码
+              <span v-if="totalTime<60">({{totalTime}})</span>
+            </el-button>
           </el-col>
         </el-row>
       </el-form-item>
@@ -59,7 +62,7 @@
 </template>
 
 <script>
-import getRegisterSms from "@/api/register.js";
+import { getRegisterSms } from "@/api/register.js";
 export default {
   data() {
     // 邮箱自定义校验规则
@@ -81,6 +84,7 @@ export default {
       }
     };
     return {
+      totalTime: 60,
       dialogFormVisible: false,
       imageUrl: "",
       codeImg: process.env.VUE_APP_URL + "/captcha?type=sendsms",
@@ -132,6 +136,14 @@ export default {
       if (_pass === false) {
         return;
       } else {
+        this.totalTime--;
+        let timeID = setInterval(() => {
+          this.totalTime--;
+          if (this.totalTime <= 0) {
+            clearInterval(timeID);
+            this.totalTime = 60;
+          }
+        }, 1000);
         getRegisterSms({
           phone: this.form.phone,
           code: this.form.code
@@ -147,7 +159,7 @@ export default {
     },
     // 取消按钮
     submitClickFalse() {
-      this.imageUrl = '';
+      this.imageUrl = "";
       this.$refs.form.resetFields();
       this.dialogFormVisible = false;
     },
