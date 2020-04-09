@@ -8,7 +8,7 @@
       </div>
       <div class="right">
         <img :src="userInfo.avatar" alt class="avatar" />
-        <span class="user">xxx,你好</span>
+        <span class="user">{{userInfo.username}}</span>
         <el-button class="btnOut" type="primary">退出</el-button>
       </div>
     </el-header>
