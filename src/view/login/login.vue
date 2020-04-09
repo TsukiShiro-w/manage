@@ -12,7 +12,12 @@
       <!-- 登录表单内容 -->
       <el-form :model="form" :rules="rules" ref="form">
         <el-form-item prop="phone">
-          <el-input placeholder="请输入内容" prefix-icon="el-icon-user-solid" v-model="form.phone" clearable></el-input>
+          <el-input
+            placeholder="请输入内容"
+            prefix-icon="el-icon-user-solid"
+            v-model="form.phone"
+            clearable
+          ></el-input>
         </el-form-item>
         <el-form-item prop="password">
           <el-input
@@ -28,10 +33,10 @@
             <el-input v-model="form.code" prefix-icon="el-icon-key" placeholder="请输入验证码"></el-input>
           </el-col>
           <el-col :span="6">
-            <img class="codeImg" :src='codeImg' @click="resetCode" alt />
+            <img class="codeImg" :src="codeImg" @click="resetCode" alt />
           </el-col>
         </el-form-item>
-        <el-form-item>
+        <el-form-item prop="checked">
           <el-checkbox v-model="form.checked">
             我已阅读并同意
             <a href="#">用户协议</a>
@@ -58,21 +63,40 @@
 </template>
 
 <script>
-import register from "./register.vue";
+import register from "@/view/login/register.vue";
+import {loginStart} from "@/api/login.js";
 export default {
   data() {
+    let checkPhone = (rule, value, callback) => {
+      let reg = /^(0|86|17951)?(13[0-9]|15[012356789]|166|17[3678]|18[0-9]|14[57])[0-9]{8}$/;
+      if (reg.test(value)) {
+        callback();
+      } else {
+        callback("请输入正确的手机号");
+      }
+    };
+    let checked = (rule, value, callback) => {
+      if (value === true) {
+        callback();
+      } else {
+        callback("勾选了用户协议才能登陆");
+      }
+    };
     return {
       // 表单内容
-      codeImg:process.env.VUE_APP_URL + '/captcha?type=login',
+      codeImg: process.env.VUE_APP_URL + "/captcha?type=login",
       form: {
         phone: "",
         password: "",
-        code: '',
+        code: "",
         checked: false
       },
       // 表单验证规则
       rules: {
-        phone: [{ required: true, message: "请输入手机号", trigger: "blur" }],
+        phone: [
+          { required: true, message: "请输入手机号", trigger: "blur" },
+          { validator: checkPhone, trigger: "change" }
+        ],
         password: [
           { required: true, message: "请输入密码", trigger: "blur" },
           { min: 6, max: 12, message: "请输入6-12位密码", trigger: "blur" }
@@ -80,6 +104,10 @@ export default {
         code: [
           { required: true, message: "请输入验证码", trigger: "blur" },
           { min: 4, max: 4, message: "请输入正确的验证码", trigger: "blur" }
+        ],
+        checked: [
+          { required: true, message: "请确认勾选用户协议", trigger: "change" },
+          { validator: checked, trigger: "blur" }
         ]
       }
     };
@@ -90,14 +118,18 @@ export default {
   },
   methods: {
     //刷新验证码
-    resetCode(){
-      this.codeImg = process.env.VUE_APP_URL + '/captcha?type=login&t=' + Date.now();
+    resetCode() {
+      this.codeImg =
+        process.env.VUE_APP_URL + "/captcha?type=login&t=" + Date.now();
     },
     // 表单提示框
     subLogin() {
       this.$refs.form.validate(result => {
         if (result) {
-          this.$message.success("成功");
+          loginStart(this.form).then(res => {
+            console.log(res);
+            this.$message.success("登录成功");
+          });
         } else {
           this.$message.error("请输入登录信息");
         }
@@ -164,7 +196,7 @@ export default {
       width: 100%;
     }
   }
-  .codeImg{
+  .codeImg {
     width: 100px;
     height: 40px;
   }
