@@ -159,7 +159,7 @@ export default {
           phone: this.form.phone,
           code: this.form.code
         }).then(res => {
-          this.$message.success(res.data.data.captcha + "");
+          this.$message.success(res.data.captcha + "");
         });
       }
     },
@@ -179,12 +179,8 @@ export default {
           // 注册成功
           register(this.form).then(res => {
             console.log(res);
-            if (res.data.code == 200) {
-              this.$message.success("注册成功");
-              this.dialogFormVisible = false;
-            } else {
-              this.$message.warning(res.data.message);
-            }
+            this.$message.success("注册成功");
+            this.dialogFormVisible = false;
           });
         } else {
           // 注册失败
