@@ -10,6 +10,10 @@ import userList from '@/view/home/userList/userList.vue'
 import question from '@/view/home/question/question.vue'
 import business from '@/view/home/business/business.vue'
 import subject from '@/view/home/subject/subject.vue'
+
+//进度条
+import  NProgress from 'nprogress';
+import 'nprogress/nprogress.css';
 // 2.注册路由
 Vue.use(VueRouter);
 
@@ -50,5 +54,14 @@ let router = new VueRouter({
         }
     ]
 });
+
+router.beforeEach((to,from,next)=>{
+    NProgress.start();
+    next();
+});
+
+router.afterEach(()=>{
+    NProgress.done();
+})
 
 export default router;
