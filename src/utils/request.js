@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { Message } from 'element-ui';
-import {getToken} from '@/utils/token.js'
+import {getToken,removeToken} from '@/utils/token.js'
+import router from '@/router/index.js'
 // 创建实例时设置配置的默认值
 var instance = axios.create({
     //设置基地址
@@ -26,7 +27,11 @@ instance.interceptors.response.use(function (response) {
     // 对响应数据做点什么
     if (response.data.code == 200) {
         return response.data;
-    } else {
+    }else if(response.data.code == 206){
+        router.push('/');
+        Message.error(response.data.message);
+        removeToken();
+    }else {
         Message.error(response.data.message);
         return Promise.reject('error');
     }

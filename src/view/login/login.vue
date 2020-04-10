@@ -65,7 +65,7 @@
 <script>
 import register from "@/view/login/register.vue";
 import { loginStart } from "@/api/login.js";
-import { saveToken } from "@/utils/token.js";
+import { saveToken,getToken } from "@/utils/token.js";
 export default {
   data() {
     let checkPhone = (rule, value, callback) => {
@@ -142,7 +142,12 @@ export default {
     getReg() {
       this.$refs.register.dialogFormVisible = true;
     }
-  }
+  },
+  created() {
+    if (getToken()) {
+      this.$router.push('/layout');
+    }
+  },
 };
 </script>
 
