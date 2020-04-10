@@ -23,6 +23,7 @@ let router = new VueRouter({
         },
         {
             path: '/layout',
+            redirect:'/layout/chart',
             component: home,
             children: [
                 {
