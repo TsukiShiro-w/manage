@@ -29,7 +29,7 @@ instance.interceptors.response.use(function (response) {
         return response.data;
     }else if(response.data.code == 206){
         router.push('/');
-        Message.error(response.data.message);
+        Message.error('用户登录超时');
         removeToken();
     }else {
         Message.error(response.data.message);
