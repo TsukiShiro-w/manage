@@ -147,6 +147,10 @@ export default {
     box-shadow: 0px 2px 5px 0px rgba(63, 63, 63, 0.35);
   }
 
+  .main{
+    background:rgba(232,233,236,1);
+  }
+
   .el-menu-vertical-demo:not(.el-menu--collapse) {
     width: 200px;
   }
