@@ -7,8 +7,8 @@
         <span class="title">黑马面面</span>
       </div>
       <div class="right">
-        <img :src="userInfo.avatar" alt class="avatar" />
-        <span class="user">{{userInfo.username}}</span>
+        <img :src="$store.state.userInfo.avatar" alt class="avatar" />
+        <span class="user">{{$store.state.userInfo.username}}</span>
         <el-button class="btnOut" @click="exit" type="primary">退出</el-button>
       </div>
     </el-header>
@@ -17,7 +17,7 @@
         <el-row class="tac">
           <el-col>
             <el-menu
-              :router='true'
+              :router="true"
               :default-active="$route.fullPath"
               class="el-menu-vertical-demo"
               :collapse="collapse"
@@ -55,12 +55,11 @@
 
 <script>
 import { getUserInfo } from "@/api/home.js";
-import { removeToken,getToken } from "@/utils/token.js";
+import { removeToken, getToken } from "@/utils/token.js";
 import { exitLogin } from "@/api/home.js";
 export default {
   data() {
     return {
-      userInfo: "",
       collapse: true
     };
   },
@@ -84,13 +83,13 @@ export default {
   },
   created() {
     if (!getToken()) {
-      this.$router.push('/');
+      this.$router.push("/");
       return;
     }
     getUserInfo().then(res => {
-      console.log(res);
-      this.userInfo = res.data;
-      this.userInfo.avatar = process.env.VUE_APP_URL + "/" + res.data.avatar;
+      this.$store.state.userInfo = res.data;
+      this.$store.state.userInfo.avatar =
+        process.env.VUE_APP_URL + "/" + res.data.avatar;
     });
   }
 };
