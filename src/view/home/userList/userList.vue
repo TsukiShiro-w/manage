@@ -41,7 +41,7 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button>编辑</el-button>
+            <el-button @click="edit(scope.row)">编辑</el-button>
             <el-button
               @click="setStatus(scope.row.id)"
               :type="scope.row.status==0?'success':'info'"
@@ -62,7 +62,7 @@
         ></el-pagination>
       </div>
     </el-card>
-    <addUserList ref="addUserList"></addUserList>
+    <addUserList ref="addUserList" :mode="mode" @add="search"></addUserList>
   </div>
 </template>
 
@@ -79,6 +79,7 @@ export default {
   },
   data() {
     return {
+      mode: "add",
       pagination: {
         currentPage: 1,
         pageSize: 10,
@@ -124,15 +125,21 @@ export default {
       this.search();
     },
     add() {
-      (this.$refs.addUserList.form = {
+      this.mode = "add";
+      this.$refs.addUserList.form = {
         role_id: "",
         status: "",
         username: "",
         email: "",
         phone: "",
         remark: ""
-      }),
-        (this.$refs.addUserList.dialogFormVisible = true);
+      };
+      this.$refs.addUserList.dialogFormVisible = true;
+    },
+    edit(row) {
+      this.mode = "edit";
+      this.$refs.addUserList.dialogFormVisible = true;
+      this.$refs.addUserList.form = JSON.parse(JSON.stringify(row));
     },
     del(id) {
       this.$confirm("此操作将永久删除该用户, 是否继续?", "提示", {

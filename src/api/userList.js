@@ -29,4 +29,11 @@ function addUser(data) {
         data
     })
 }
-export { getUserListData,delUserListData,setUserStatus,addUser }
+function editUserData(data) {
+    return instance({
+        url:'/user/edit',
+        method:'post',
+        data,
+    })
+}
+export { getUserListData,delUserListData,setUserStatus,addUser,editUserData }

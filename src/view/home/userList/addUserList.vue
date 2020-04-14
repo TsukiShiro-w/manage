@@ -1,7 +1,7 @@
 <template>
   <div id="addUserList">
     <el-dialog title="收货地址" :visible.sync="dialogFormVisible" width="600px">
-      <div slot="title" class="title">新增用户</div>
+      <div slot="title" class="title">{{mode=='add'?'新增':'编辑'}}用户</div>
       <el-form :rules="rules" ref="form" :model="form" label-width="70px">
         <el-form-item label="用户名" prop="username">
           <el-input v-model="form.username"></el-input>
@@ -21,8 +21,8 @@
         </el-form-item>
         <el-form-item label="状态">
           <el-select v-model="form.status">
-            <el-option value="1" label="启用"></el-option>
-            <el-option value="0" label="禁用"></el-option>
+            <el-option value="1">启用</el-option>
+            <el-option value="0">禁用</el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="用户备注" prop="remark">
@@ -38,8 +38,9 @@
 </template>
 
 <script>
-import { addUser } from "@/api/userList.js";
+import { addUser, editUserData } from "@/api/userList.js";
 export default {
+  props: ["mode"],
   data() {
     // 邮箱自定义校验规则
     let checkEmail = (rule, value, callback) => {
@@ -59,6 +60,7 @@ export default {
         callback("请输入正确的手机号");
       }
     };
+
     return {
       form: {
         role_id: "",
@@ -99,10 +101,20 @@ export default {
     submitUser() {
       this.$refs.form.validate(result => {
         if (result) {
-          addUser(this.form).then(() => {
-            this.$message.success("新增成功");
-            this.dialogFormVisible = false;
-          });
+          if (this.mode == "add") {
+            addUser(this.form).then(() => {
+              this.$message.success("新增成功");
+              this.$emit('add');
+              this.dialogFormVisible = false;
+              
+            });
+          } else {
+            editUserData(this.form).then(() => {
+              this.$message.success("编辑成功");
+              this.$parent.getData();
+              this.dialogFormVisible = false;
+            });
+          }
         } else {
           this.$message.error("新增失败");
         }
