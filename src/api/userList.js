@@ -25,8 +25,8 @@ function setUserStatus(data) {
 function addUser(data) {
     return instance({
         url:'/user/add',
-        methods:'post',
-        data
+        method:'post',
+        data,
     })
 }
 function editUserData(data) {

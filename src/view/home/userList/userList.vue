@@ -10,9 +10,12 @@
         </el-form-item>
         <el-form-item label="角色" prop="role_id">
           <el-select v-model="form.role_id">
-            <el-option value="2" label="管理员"></el-option>
-            <el-option value="3" label="老师"></el-option>
-            <el-option value="4" label="学生"></el-option>
+            <el-option
+              v-for="(value,key, index) in $store.state.roleObj"
+              :key="index"
+              :value="key"
+              :label="value"
+            ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -37,7 +40,9 @@
         </el-table-column>
         <el-table-column prop="remark" label="备注" width="150"></el-table-column>
         <el-table-column prop="status" label="状态" width="80">
-          <template slot-scope="scope">{{scope.row.status==1?'启用':'禁用'}}</template>
+          <template slot-scope="scope">
+            <div :class="{red:scope.row.status==0,green:scope.row.status==1}">{{scope.row.status==1?'启用':'禁用'}}</div>
+          </template>
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
@@ -174,6 +179,14 @@ export default {
   .block {
     text-align: center;
     margin-top: 20px;
+  }
+  .red {
+    color: red;
+    font-weight: 600;
+  }
+  .green{
+    color: #67C23A;
+    font-weight: 600;
   }
 }
 </style>

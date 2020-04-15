@@ -14,15 +14,18 @@
         </el-form-item>
         <el-form-item label="角色" prop="role_id">
           <el-select v-model="form.role_id">
-            <el-option value="2">管理员</el-option>
-            <el-option value="3">老师</el-option>
-            <el-option value="4">学生</el-option>
+            <el-option
+              v-for="(value,key, index) in $store.state.roleObj"
+              :key="index"
+              :value="+key"
+              :label="value"
+            ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="状态">
           <el-select v-model="form.status">
-            <el-option value="1">启用</el-option>
-            <el-option value="0">禁用</el-option>
+            <el-option :value="1" label="启用"></el-option>
+            <el-option :value="0" label="禁用"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="用户备注" prop="remark">
@@ -42,25 +45,6 @@ import { addUser, editUserData } from "@/api/userList.js";
 export default {
   props: ["mode"],
   data() {
-    // 邮箱自定义校验规则
-    let checkEmail = (rule, value, callback) => {
-      let reg = /\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/;
-      if (reg.test(value)) {
-        callback();
-      } else {
-        callback("请输入正确邮箱");
-      }
-    };
-    // 手机号自定义校验规则
-    let checkPhone = (rule, value, callback) => {
-      let reg = /^(0|86|17951)?(13[0-9]|15[012356789]|166|17[3678]|18[0-9]|14[57])[0-9]{8}$/;
-      if (reg.test(value)) {
-        callback();
-      } else {
-        callback("请输入正确的手机号");
-      }
-    };
-
     return {
       form: {
         role_id: "",
@@ -78,16 +62,30 @@ export default {
         email: [
           { required: true, message: "请输入邮箱", trigger: "blur" },
           {
-            validator: checkEmail,
-            message: "请输入正确的邮箱",
+            //邮箱自定义验证
+            validator: (rule, value, callback) => {
+              let _reg = /\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/;
+              if (_reg.test(value)) {
+                callback();
+              } else {
+                callback("请输入正确的邮箱");
+              }
+            },
             trigger: "change"
           }
         ],
         phone: [
           { required: true, message: "请输入手机号", trigger: "blur" },
           {
-            validator: checkPhone,
-            message: "请输入正确手机号",
+            // 手机号自定义验证
+            validator: (rule, value, callback) => {
+              let _reg = /^(0|86|17951)?(13[0-9]|15[012356789]|166|17[3678]|18[0-9]|14[57])[0-9]{8}$/;
+              if (_reg.test(value)) {
+                callback();
+              } else {
+                callback("请输入正确的手机号");
+              }
+            },
             trigger: "change"
           }
         ],
@@ -104,9 +102,8 @@ export default {
           if (this.mode == "add") {
             addUser(this.form).then(() => {
               this.$message.success("新增成功");
-              this.$emit('add');
+              this.$emit("add");
               this.dialogFormVisible = false;
-              
             });
           } else {
             editUserData(this.form).then(() => {
