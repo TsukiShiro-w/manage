@@ -22,11 +22,16 @@
               class="el-menu-vertical-demo"
               :collapse="collapse"
             >
-              <el-menu-item index="/layout/chart">
-                <i class="el-icon-pie-chart"></i>
-                <span slot="title">数据概览</span>
+              <el-menu-item
+                :index="'/layout/'+item.path"
+                v-for="(item,index) in this.$router.options.routes[1].children"
+                :key="index"
+                v-show="item.meta.role.includes($store.state.role)"
+              >
+                <i :class="item.meta.icon"></i>
+                <span slot="title">{{item.meta.title}}</span>
               </el-menu-item>
-              <el-menu-item index="/layout/userList">
+              <!-- <el-menu-item index="/layout/userList">
                 <i class="el-icon-user"></i>
                 <span slot="title">用户列表</span>
               </el-menu-item>
@@ -41,7 +46,7 @@
               <el-menu-item index="/layout/subject">
                 <i class="el-icon-notebook-2"></i>
                 <span slot="title">学科列表</span>
-              </el-menu-item>
+              </el-menu-item>-->
             </el-menu>
           </el-col>
         </el-row>
@@ -82,6 +87,7 @@ export default {
     }
   },
   created() {
+    console.log(this.$router);
     if (!getToken()) {
       this.$router.push("/");
       return;
@@ -90,6 +96,17 @@ export default {
       this.$store.state.userInfo = res.data;
       this.$store.state.userInfo.avatar =
         process.env.VUE_APP_URL + "/" + res.data.avatar;
+        this.$store.state.role = res.data.role;
+      if (res.data.status == 0) {
+        this.$message.error("该账号已被禁用,联系管理员");
+        removeToken();
+        this.$router.push("/");
+      }else{
+        if (!this.$route.meta.role.includes(this.$store.state.role)) {
+            this.$message.warning('无权访问的页面')
+            this.$router.push('/layout/subject');
+        }
+      }
     });
   }
 };
@@ -147,8 +164,8 @@ export default {
     box-shadow: 0px 2px 5px 0px rgba(63, 63, 63, 0.35);
   }
 
-  .main{
-    background:rgba(232,233,236,1);
+  .main {
+    background: rgba(232, 233, 236, 1);
   }
 
   .el-menu-vertical-demo:not(.el-menu--collapse) {

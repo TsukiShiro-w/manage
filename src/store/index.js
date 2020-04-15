@@ -13,6 +13,7 @@ const store = new Vuex.Store({
             3:'老师',
             4:'学生',
         },
+        role:'超级管理员',
     }
 })
 

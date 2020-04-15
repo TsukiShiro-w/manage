@@ -43,6 +43,15 @@
 <script>
 import { addUser, editUserData } from "@/api/userList.js";
 export default {
+  watch: {
+    dialogFormVisible(newVal) {
+      if (newVal == true) {
+        this.$nextTick(()=>{
+          this.$refs.form.clearValidate();
+        })
+      }
+    }
+  },
   props: ["mode"],
   data() {
     return {

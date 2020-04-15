@@ -15,6 +15,10 @@ import subject from '@/view/home/subject/subject.vue'
 //进度条
 import  NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
+
+import store from '@/store/index.js'
+
+import { Message } from 'element-ui';
 // 2.注册路由
 Vue.use(VueRouter);
 
@@ -29,11 +33,12 @@ let router = new VueRouter({
             component: login,
             meta:{
                 title:'登录',
+                role:['超级管理员','管理员','老师','学生'],
             }
         },
         {
             path: '/layout',
-            redirect:'/layout/chart',
+            redirect:'/layout/subject',
             component: home,
             children: [
                 {
@@ -41,6 +46,8 @@ let router = new VueRouter({
                     component: chart,
                     meta:{
                         title:'数据概览',
+                        role:['超级管理员','管理员','老师'],
+                        icon:'el-icon-pie-chart',
                     }
                 },
                 {
@@ -48,6 +55,8 @@ let router = new VueRouter({
                     component: userList,
                     meta:{
                         title:'用户列表',
+                        role:['超级管理员','管理员'],
+                        icon:'el-icon-user',
                     }
                 },
                 {
@@ -55,6 +64,8 @@ let router = new VueRouter({
                     component: question,
                     meta:{
                         title:'题库列表',
+                        role:['超级管理员','管理员','老师'],
+                        icon:'el-icon-edit-outline',
                     }
                 },
                 {
@@ -62,6 +73,8 @@ let router = new VueRouter({
                     component: business,
                     meta:{
                         title:'企业列表',
+                        role:['超级管理员','管理员','老师'],
+                        icon:'el-icon-office-building',
                     }
                 },
                 {
@@ -69,6 +82,8 @@ let router = new VueRouter({
                     component: subject,
                     meta:{
                         title:'学科列表',
+                        role:['超级管理员','管理员','老师','学生'],
+                        icon:'el-icon-notebook-2'
                     }
                 },
             ]
@@ -78,7 +93,13 @@ let router = new VueRouter({
 
 router.beforeEach((to,from,next)=>{
     NProgress.start();
-    next();
+    
+    if (to.meta.role.includes(store.state.role)) {
+        next();
+    }else{
+        Message.warning('无权访问的页面');
+        next('/layout/subject');
+    }
 });
 
 router.afterEach((to)=>{

@@ -46,8 +46,9 @@
             <el-button
               @click="setStatus(scope.row.id)"
               :type="scope.row.status==1?'info':'success'"
+              v-if="$store.state.role.includes('管理员')"
             >{{scope.row.status==0?'启用':'禁用'}}</el-button>
-            <el-button @click="del(scope.row.id)" type="danger">删除</el-button>
+            <el-button @click="del(scope.row.id)" type="danger" v-if="$store.state.role.includes('管理员')">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
