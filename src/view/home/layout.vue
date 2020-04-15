@@ -24,7 +24,7 @@
             >
               <el-menu-item
                 :index="'/layout/'+item.path"
-                v-for="(item,index) in this.$router.options.routes[1].children"
+                v-for="(item,index) in $router.options.routes[1].children"
                 :key="index"
                 v-show="item.meta.role.includes($store.state.role)"
               >
