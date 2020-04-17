@@ -37,7 +37,7 @@
         <el-table-column prop="create_time" label="创建日期" width="200"></el-table-column>
         <el-table-column prop="status" label="状态" width="150">
           <template slot-scope="scope">
-            <div :class="{red:scope.row.status==0}">{{scope.row.status==1?'启用':'禁用'}}</div>
+            <div :class="{red:scope.row.status==0,green:scope.row.status==1}">{{scope.row.status==1?'启用':'禁用'}}</div>
           </template>
         </el-table-column>
         <el-table-column label="操作">
@@ -48,7 +48,11 @@
               :type="scope.row.status==1?'info':'success'"
               v-if="$store.state.role.includes('管理员')"
             >{{scope.row.status==0?'启用':'禁用'}}</el-button>
-            <el-button @click="del(scope.row.id)" type="danger" v-if="$store.state.role.includes('管理员')">删除</el-button>
+            <el-button
+              @click="del(scope.row.id)"
+              type="danger"
+              v-if="$store.state.role.includes('管理员')"
+            >删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -194,6 +198,10 @@ export default {
 
     .red {
       color: red;
+      font-weight: 600;
+    }
+    .green {
+      color: #67c23a;
       font-weight: 600;
     }
 

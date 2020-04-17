@@ -39,13 +39,21 @@
         <el-table-column label="创建者" prop="username" width="200px"></el-table-column>
         <el-table-column label="创建日期" prop="create_time" width="200px"></el-table-column>
         <el-table-column label="状态" width="150px">
-          <template slot-scope="scope">{{scope.row.status == 1 ? '启用':'禁用'}}</template>
+          <template slot-scope="scope"><div :class="{red:scope.row.status==0,green:scope.row.status==1}">{{scope.row.status==1?'启用':'禁用'}}</div></template>
         </el-table-column>
         <el-table-column label="操作" v-if="$store.state.role!='学生'">
           <template slot-scope="scope">
             <el-button @click="edit(scope.row)">编辑</el-button>
-            <el-button @click="setStatus(scope.row.id)" v-if="$store.state.role.includes('管理员')">{{scope.row.status==0?'启用':'禁用'}}</el-button>
-            <el-button @click="del(scope.row.id)" type="danger" v-if="$store.state.role.includes('管理员')">删除</el-button>
+            <el-button
+              @click="setStatus(scope.row.id)"
+              v-if="$store.state.role.includes('管理员')"
+              :type="scope.row.status==0?'success':'info'"
+            >{{scope.row.status==0?'启用':'禁用'}}</el-button>
+            <el-button
+              @click="del(scope.row.id)"
+              type="danger"
+              v-if="$store.state.role.includes('管理员')"
+            >删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -190,6 +198,15 @@ export default {
     .block {
       text-align: center;
       margin-top: 20px;
+    }
+
+    .red {
+      color: red;
+      font-weight: 600;
+    }
+    .green {
+      color: #67c23a;
+      font-weight: 600;
     }
   }
 }
