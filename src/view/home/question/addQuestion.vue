@@ -61,6 +61,15 @@
         <el-form-item prop="title" label="题目标题">
           <quillEditor v-model="form.title" :options="{placeholder:'请输入内容'}"></quillEditor>
         </el-form-item>
+        <el-form-item :label="typeObj[form.type]">
+          <allSelect :form="form"></allSelect>
+        </el-form-item>
+        <el-form-item>
+          <hr />
+        </el-form-item>
+        <el-form-item label="解析视频">
+          <uploads v-model="form.video" type="video"></uploads>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -76,9 +85,13 @@ import "quill/dist/quill.core.css";
 import "quill/dist/quill.snow.css";
 import "quill/dist/quill.bubble.css";
 import { quillEditor } from "vue-quill-editor";
+import allSelect from "@/view/home/question/allSelect.vue";
+import uploads from "@/view/home/question/uploads.vue";
 export default {
   components: {
-    quillEditor
+    quillEditor,
+    allSelect,
+    uploads
   },
   watch: {
     dialogFormVisible(newVal) {
@@ -100,16 +113,48 @@ export default {
         city: [],
         type: 1,
         difficulty: 1,
-        title: ""
+        title: "",
+        single_select_answer: "",
+        multiple_select_answer: [],
+        short_answer: "",
+        video: "",
+        select_options: [
+          {
+            label: "A",
+            text: "狗不理",
+            image: ""
+          },
+          {
+            label: "B",
+            text: "猫不理",
+            image: ""
+          },
+          {
+            label: "C",
+            text: "麻花",
+            image: ""
+          },
+          {
+            label: "D",
+            text: "炸酱面",
+            image: ""
+          }
+        ]
       },
       rules: {
-        subject: [{ required: true, message: "请输入选择学科", trigger: "blur" }],
+        subject: [
+          { required: true, message: "请输入选择学科", trigger: "blur" }
+        ],
         step: [{ required: true, message: "请输入选择阶段", trigger: "blur" }],
-        enterprise: [{ required: true, message: "请输入选择企业", trigger: "blur" }],
+        enterprise: [
+          { required: true, message: "请输入选择企业", trigger: "blur" }
+        ],
         city: [{ required: true, message: "请输入选择城市", trigger: "blur" }],
         type: [{ required: true, message: "请输入选择题型", trigger: "blur" }],
-        difficulty: [{ required: true, message: "请输入选择难度", trigger: "blur" }],
-        title: [{ required: true, message: "请输入标题", trigger: "blur" }],
+        difficulty: [
+          { required: true, message: "请输入选择难度", trigger: "blur" }
+        ],
+        title: [{ required: true, message: "请输入标题", trigger: "blur" }]
       }
     };
   },
