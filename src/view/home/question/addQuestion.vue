@@ -70,6 +70,18 @@
         <el-form-item label="解析视频">
           <uploads v-model="form.video" type="video"></uploads>
         </el-form-item>
+        <el-form-item>
+          <hr />
+        </el-form-item>
+        <el-form-item prop="answer_analyze" label="答案解析">
+          <quillEditor v-model="form.answer_analyze" :options="{placeholder:'请输入内容'}"></quillEditor>
+        </el-form-item>
+        <el-form-item>
+          <hr />
+        </el-form-item>
+        <el-form-item prop="remark" label="试题备注">
+          <el-input class="remark" v-model="form.remark"></el-input>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -118,6 +130,8 @@ export default {
         multiple_select_answer: [],
         short_answer: "",
         video: "",
+        remark: "",
+        answer_analyze: "",
         select_options: [
           {
             label: "A",
@@ -154,7 +168,11 @@ export default {
         difficulty: [
           { required: true, message: "请输入选择难度", trigger: "blur" }
         ],
-        title: [{ required: true, message: "请输入标题", trigger: "blur" }]
+        title: [{ required: true, message: "请输入标题", trigger: "blur" }],
+        remark: [{ required: true, message: "请输入备注", trigger: "blur" }],
+        answer_analyze: [
+          { required: true, message: "请输入答案解析", trigger: "blur" }
+        ]
       }
     };
   },
@@ -189,6 +207,10 @@ export default {
     color: white;
     background: linear-gradient(to right, #02c5fa, #1394fa);
     padding-left: 20px;
+  }
+  .remark {
+    width: 754px;
+    float: right;
   }
   .subject,
   .step,
