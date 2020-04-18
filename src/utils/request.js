@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Message } from 'element-ui';
-import {getToken,removeToken} from '@/utils/token.js'
+import { getToken, removeToken } from '@/utils/token.js'
 import router from '@/router/index.js'
 // 创建实例时设置配置的默认值
 var instance = axios.create({
@@ -27,11 +27,11 @@ instance.interceptors.response.use(function (response) {
     // 对响应数据做点什么
     if (response.data.code == 200) {
         return response.data;
-    }else if(response.data.code == 206){
+    } else if (response.data.code == 206) {
         router.push('/');
         Message.error('用户登录超时');
         removeToken();
-    }else {
+    } else {
         Message.error(response.data.message);
         return Promise.reject('error');
     }

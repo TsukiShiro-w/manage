@@ -43,18 +43,24 @@
         </el-form-item>
         <el-form-item label="题型" prop="type">
           <el-radio-group v-model="form.type">
-            <el-radio :label="key" v-for="(value,key,index) in typeObj" :key="index">{{value}}</el-radio>
+            <el-radio :label="+key" v-for="(value,key,index) in typeObj" :key="index">{{value}}</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="难度" prop="difficulty">
           <el-radio-group v-model="form.difficulty">
-            <el-radio :label="key" v-for="(value,key,index) in difficultyObj" :key="index">{{value}}</el-radio>
+            <el-radio
+              :label="+key"
+              v-for="(value,key,index) in difficultyObj"
+              :key="index"
+            >{{value}}</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item>
           <hr />
         </el-form-item>
-        <el-form-item label="试题标题"></el-form-item>
+        <el-form-item prop="title" label="题目标题">
+          <quillEditor v-model="form.title" :options="{placeholder:'请输入内容'}"></quillEditor>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -66,7 +72,14 @@
 
 <script>
 import { regionData } from "element-china-area-data";
+import "quill/dist/quill.core.css";
+import "quill/dist/quill.snow.css";
+import "quill/dist/quill.bubble.css";
+import { quillEditor } from "vue-quill-editor";
 export default {
+  components: {
+    quillEditor
+  },
   watch: {
     dialogFormVisible(newVal) {
       if (newVal == false) {
@@ -85,22 +98,18 @@ export default {
         step: "",
         enterprise: "",
         city: [],
-        type: "",
-        difficulty: ""
+        type: 1,
+        difficulty: 1,
+        title: ""
       },
       rules: {
-        subject: [
-          { required: true, message: "请输入选择学科", trigger: "blur" }
-        ],
+        subject: [{ required: true, message: "请输入选择学科", trigger: "blur" }],
         step: [{ required: true, message: "请输入选择阶段", trigger: "blur" }],
-        enterprise: [
-          { required: true, message: "请输入选择企业", trigger: "blur" }
-        ],
+        enterprise: [{ required: true, message: "请输入选择企业", trigger: "blur" }],
         city: [{ required: true, message: "请输入选择城市", trigger: "blur" }],
         type: [{ required: true, message: "请输入选择题型", trigger: "blur" }],
-        difficulty: [
-          { required: true, message: "请输入选择难度", trigger: "blur" }
-        ]
+        difficulty: [{ required: true, message: "请输入选择难度", trigger: "blur" }],
+        title: [{ required: true, message: "请输入标题", trigger: "blur" }],
       }
     };
   },
@@ -150,6 +159,12 @@ export default {
   }
   .el-icon-close {
     color: white;
+  }
+  .quill-editor {
+    margin-top: 55px;
+  }
+  .el-form-item__label {
+    margin-right: 50px;
   }
 }
 </style>
