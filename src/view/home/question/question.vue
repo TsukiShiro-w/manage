@@ -30,11 +30,11 @@
             <el-form-item label="阶段" prop="step">
               <el-select v-model="form.step">
                 <el-option
-                v-for="(value,key, index) in stepObj"
-                :key="index"
-                :value="+key"
-                :label="value"
-              ></el-option>
+                  v-for="(value,key, index) in stepObj"
+                  :key="index"
+                  :value="+key"
+                  :label="value"
+                ></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="作者" prop="username">
@@ -122,12 +122,12 @@
         <el-table-column label="访问量" prop="reads" width="100px"></el-table-column>
         <el-table-column label="状态">
           <template slot-scope="scope">
-            <el-button>编辑</el-button>
+            <el-button @click="edit(scope.row)">编辑</el-button>
             <el-button
               :type="scope.row.status==1?'info':'success'"
               @click="setStatus(scope.row.id)"
             >{{scope.row.status==1?'禁用':'启用'}}</el-button>
-            <el-button>删除</el-button>
+            <el-button @click="del(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -150,6 +150,7 @@
       :businessData="businessData"
       :stepObj="stepObj"
       :typeObj="typeObj"
+      :mode="mode"
     ></addQuestion>
   </div>
 </template>
@@ -157,7 +158,11 @@
 <script>
 import { getSubjectList } from "@/api/subject.js";
 import { getBusinessData } from "@/api/business.js";
-import { getQuestionList, setQuestionStatus } from "@/api/question.js";
+import {
+  getQuestionList,
+  setQuestionStatus,
+  delQuestionData
+} from "@/api/question.js";
 import addQuestion from "@/view/home/question/addQuestion.vue";
 export default {
   components: {
@@ -165,6 +170,7 @@ export default {
   },
   data() {
     return {
+      mode: "add",
       pagination: {
         currentPage: 1,
         pageSize: 10,
@@ -208,9 +214,12 @@ export default {
         ...this.form
       };
       getQuestionList(_page).then(res => {
-        console.log(res);
         this.tableData = res.data.items;
         this.pagination.total = res.data.pagination.total;
+        this.tableData.forEach(item => {
+          item.city = item.city.split(",");
+          item.multiple_select_answer = item.multiple_select_answer.split(",");
+        });
       });
     },
     // 搜索
@@ -231,6 +240,64 @@ export default {
     },
     // 添加
     add() {
+      this.mode = "add";
+      // 表单还原成默认值
+      this.$refs.addQuestion.form = {
+        subject: "",
+        step: "",
+        enterprise: "",
+        city: [],
+        type: 1,
+        difficulty: 1,
+        title: "",
+        single_select_answer: "",
+        multiple_select_answer: [],
+        short_answer: "",
+        video: "",
+        remark: "",
+        answer_analyze: "",
+        select_options: [
+          {
+            label: "A",
+            text: "",
+            image: ""
+          },
+          {
+            label: "B",
+            text: "",
+            image: ""
+          },
+          {
+            label: "C",
+            text: "",
+            image: ""
+          },
+          {
+            label: "D",
+            text: "",
+            image: ""
+          }
+        ]
+      };
+      this.$refs.addQuestion.dialogFormVisible = true;
+    },
+    // 删除
+    del(id) {
+      this.$confirm("删除内容, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(() => {
+        delQuestionData({ id: id }).then(() => {
+          this.$message.success("删除成功");
+          this.search();
+        });
+      });
+    },
+    // 编辑
+    edit(row) {
+      this.mode = "edit";
+      this.$refs.addQuestion.form = JSON.parse(JSON.stringify(row));
       this.$refs.addQuestion.dialogFormVisible = true;
     }
   },
@@ -242,7 +309,7 @@ export default {
     });
     // 获取企业
     getBusinessData({ limit: 1000 }).then(res => {
-      console.log(res);
+      // console.log(res);
       this.businessData = res.data.items;
     });
     // 获取题目

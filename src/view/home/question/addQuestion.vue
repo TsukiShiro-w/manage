@@ -1,7 +1,7 @@
 <template>
   <div id="addQuestion">
     <el-dialog title="收货地址" :fullscreen="true" :visible.sync="dialogFormVisible">
-      <div slot="title" class="title">新增题库测试</div>
+      <div slot="title" class="title">{{mode=='add'?'新增':'编辑'}}题库测试</div>
       <el-form :model="form" class="form" :rules="rules" ref="form">
         <el-form-item label="学科" prop="subject">
           <el-select v-model="form.subject" placeholder="请选择学科" class="subject">
@@ -59,10 +59,19 @@
           <hr />
         </el-form-item>
         <el-form-item prop="title" label="题目标题">
-          <quillEditor v-model="form.title" :options="{placeholder:'请输入内容'}"></quillEditor>
+          <quillEditor
+            v-model="form.title"
+            @change="editorChange('title')"
+            :options="{placeholder:'请输入内容'}"
+          ></quillEditor>
         </el-form-item>
-        <el-form-item :label="typeObj[form.type]">
-          <allSelect :form="form"></allSelect>
+        <!-- form.type是数字，在题型中由:label="+key"传入 -->
+        <el-form-item
+          :label="typeObj[form.type]"
+          :prop="{1:'single_select_answer',2:'multiple_select_answer',3:'short_answer'}[form.type]"
+        >
+          <!-- 绑定事件@change='allSelectChange' -->
+          <allSelect :form="form" @change="allSelectChange"></allSelect>
         </el-form-item>
         <el-form-item>
           <hr />
@@ -74,7 +83,11 @@
           <hr />
         </el-form-item>
         <el-form-item prop="answer_analyze" label="答案解析">
-          <quillEditor v-model="form.answer_analyze" :options="{placeholder:'请输入内容'}"></quillEditor>
+          <quillEditor
+            @change="editorChange('answer_analyze')"
+            v-model="form.answer_analyze"
+            :options="{placeholder:'请输入内容'}"
+          ></quillEditor>
         </el-form-item>
         <el-form-item>
           <hr />
@@ -99,6 +112,7 @@ import "quill/dist/quill.bubble.css";
 import { quillEditor } from "vue-quill-editor";
 import allSelect from "@/view/home/question/allSelect.vue";
 import uploads from "@/view/home/question/uploads.vue";
+import { addQuestionData, editQuestionData } from "@/api/question.js";
 export default {
   components: {
     quillEditor,
@@ -109,10 +123,21 @@ export default {
     dialogFormVisible(newVal) {
       if (newVal == false) {
         this.$refs.form.resetFields();
+      } else {
+        this.$nextTick(() => {
+          this.$refs.form.clearValidate();
+        });
       }
     }
   },
-  props: ["subjectData", "businessData", "stepObj", "typeObj", "difficultyObj"],
+  props: [
+    "subjectData",
+    "businessData",
+    "stepObj",
+    "typeObj",
+    "difficultyObj",
+    "mode"
+  ],
   data() {
     return {
       options: regionData,
@@ -135,43 +160,58 @@ export default {
         select_options: [
           {
             label: "A",
-            text: "狗不理",
+            text: "",
             image: ""
           },
           {
             label: "B",
-            text: "猫不理",
+            text: "",
             image: ""
           },
           {
             label: "C",
-            text: "麻花",
+            text: "",
             image: ""
           },
           {
             label: "D",
-            text: "炸酱面",
+            text: "",
             image: ""
           }
         ]
       },
       rules: {
         subject: [
-          { required: true, message: "请输入选择学科", trigger: "blur" }
+          { required: true, message: "请输入选择学科", trigger: "change" }
         ],
-        step: [{ required: true, message: "请输入选择阶段", trigger: "blur" }],
+        step: [
+          { required: true, message: "请输入选择阶段", trigger: "change" }
+        ],
         enterprise: [
-          { required: true, message: "请输入选择企业", trigger: "blur" }
+          { required: true, message: "请输入选择企业", trigger: "change" }
         ],
-        city: [{ required: true, message: "请输入选择城市", trigger: "blur" }],
-        type: [{ required: true, message: "请输入选择题型", trigger: "blur" }],
+        city: [
+          { required: true, message: "请输入选择城市", trigger: "change" }
+        ],
+        type: [
+          { required: true, message: "请输入选择题型", trigger: "change" }
+        ],
         difficulty: [
-          { required: true, message: "请输入选择难度", trigger: "blur" }
+          { required: true, message: "请输入选择难度", trigger: "change" }
         ],
-        title: [{ required: true, message: "请输入标题", trigger: "blur" }],
-        remark: [{ required: true, message: "请输入备注", trigger: "blur" }],
+        title: [{ required: true, message: "请输入标题", trigger: "change" }],
+        remark: [{ required: true, message: "请输入备注", trigger: "change" }],
         answer_analyze: [
-          { required: true, message: "请输入答案解析", trigger: "blur" }
+          { required: true, message: "请输入答案解析", trigger: "change" }
+        ],
+        single_select_answer: [
+          { required: true, message: "请选择内容", trigger: "change" }
+        ],
+        multiple_select_answer: [
+          { required: true, message: "请选择内容", trigger: "change" }
+        ],
+        short_answer: [
+          { required: true, message: "请输入简答内容", trigger: "change" }
         ]
       }
     };
@@ -180,8 +220,23 @@ export default {
     addSubmit() {
       this.$refs.form.validate(result => {
         if (result) {
-          this.$message.success("提交成功");
-          this.dialogFormVisible = false;
+          if (this.mode == "add") {
+            addQuestionData(this.form).then(() => {
+              this.$message.success("新增成功");
+              this.dialogFormVisible = false;
+              this.$parent.search();
+            });
+          } else {
+            // 编辑需要的城市接口是字符串
+            let _query = JSON.parse(JSON.stringify(this.form));
+            _query.city = _query.city.join(",");
+            console.log(_query.city);
+            editQuestionData(_query).then(() => {
+              this.$message.success("编辑成功");
+              this.dialogFormVisible = false;
+              this.$parent.search();
+            });
+          }
         } else {
           this.$message.error("请完成表单");
         }
@@ -190,6 +245,17 @@ export default {
     // 级联选择器
     handleChange(value) {
       console.log(value);
+    },
+    // 传入对应的值，触发表单的验证
+    editorChange(str) {
+      this.$refs.form.validateField(str);
+    },
+    allSelectChange() {
+      this.$refs.form.validateField([
+        "single_select_answer",
+        "multiple_select_answer",
+        "short_answer"
+      ]);
     }
   }
 };

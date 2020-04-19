@@ -3,7 +3,8 @@
     <!-- 单选 -->
     <div v-if="form.type==1">
       <div class="item" v-for="(item, index) in form.select_options" :key="index">
-        <el-radio v-model="form.single_select_answer" :label="item.label"></el-radio>
+        <!-- 使用change事件，在改变的时候触发父组件表单验证 -->
+        <el-radio v-model="form.single_select_answer" :label="item.label" @change="selectChange"></el-radio>
         <el-input class="input" v-model="item.text"></el-input>
         <uploads v-model="item.image"></uploads>
       </div>
@@ -11,13 +12,17 @@
     <!-- 多选 -->
     <div v-if="form.type==2">
       <div class="item" v-for="(item, index) in form.select_options" :key="index">
-        <el-checkbox v-model="form.multiple_select_answer" :label="item.label"></el-checkbox>
+        <el-checkbox
+          v-model="form.multiple_select_answer"
+          :label="item.label"
+          @change="selectChange"
+        ></el-checkbox>
         <el-input class="input" v-model="item.text"></el-input>
         <uploads v-model="item.image"></uploads>
       </div>
     </div>
     <div v-if="form.type==3">
-      <el-input v-model="form.short_answer" type="textarea" rows="10"></el-input>
+      <el-input v-model="form.short_answer" type="textarea" rows="10" @change="selectChange"></el-input>
     </div>
   </div>
 </template>
@@ -28,7 +33,12 @@ export default {
   components: {
     uploads
   },
-  props: ["form"]
+  props: ["form"],
+  methods: {
+    selectChange() {
+      this.$emit("change");
+    }
+  }
 };
 </script>
 
