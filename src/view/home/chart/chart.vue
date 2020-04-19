@@ -41,8 +41,6 @@ export default {
   data() {
     return {
       info: "",
-      business: [],
-      city: []
     };
   },
   created() {
